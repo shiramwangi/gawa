@@ -3,7 +3,7 @@ from pathlib import Path
 
 class Settings(BaseSettings):
     DATABASE_URL: str
-    SECRET_KEY: str
+    SECRET_KEY: string
     DEBUG: bool = True
 
     class Config:
