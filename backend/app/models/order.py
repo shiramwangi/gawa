@@ -8,7 +8,7 @@ class OrderStatus(str, enum.Enum):
     PENDING = "pending"
     CONFIRMED = "confirmed"
     PREPARING = "preparing"
-    READY = "meal ready"
+    READY = "ready"
     DELIVERED = "delivered"
     CANCELLED = "cancelled"
 
