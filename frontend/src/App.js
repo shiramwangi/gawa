@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import './App.css';
 import SignupPage from './components/SignupPage';
 import LoginPage from './components/LoginPage';
+import LogoutPage from './components/LogoutPage';
 
 // Navigation Component
 const Navigation = ({ setCurrentPage }) => (
@@ -42,6 +43,12 @@ const Navigation = ({ setCurrentPage }) => (
             className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105"
           >
             Sign Up
+          </button>
+          <button 
+            onClick={() => setCurrentPage('logout')}
+            className="text-gray-300 hover:text-red-400 transition-all duration-300 font-semibold border border-gray-600 px-4 py-2 rounded-lg hover:border-red-400"
+          >
+            Logout
           </button>
         </div>
         <button className="md:hidden text-gray-300">
@@ -702,6 +709,8 @@ function App() {
         return <SignupPage setCurrentPage={setCurrentPage} />;
       case 'login':
         return <LoginPage setCurrentPage={setCurrentPage} />;
+      case 'logout':
+        return <LogoutPage setCurrentPage={setCurrentPage} />;
       default:
         return (
           <>
