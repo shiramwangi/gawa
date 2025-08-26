@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { loginUser } from '../api/auth';
 
 const LoginPage = ({ setCurrentPage }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  
-  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [message, setMessage] = useState('');
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,13 +33,11 @@ const LoginPage = ({ setCurrentPage }) => {
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = 'Email is invalid';
     }
 
-    if (!formData.password.trim()) {
+    if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
     }
 
     setErrors(newErrors);
@@ -54,52 +52,46 @@ const LoginPage = ({ setCurrentPage }) => {
     }
 
     setIsLoading(true);
-    setErrors({});
+    setMessage('');
 
     try {
-      const response = await fetch('http://localhost:8000/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        }),
+      const response = await loginUser({
+        email: formData.email,
+        password: formData.password
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setSuccessMessage('Login successful! Redirecting...');
-        // Store token in localStorage
-        if (data.access_token) {
-          localStorage.setItem('access_token', data.access_token);
-        }
-        // Redirect to home page after successful login
+      if (response.access_token) {
+        setMessage('Login successful! Redirecting to home...');
         setTimeout(() => {
           setCurrentPage('home');
         }, 2000);
       } else {
-        setErrors({ general: data.detail || 'Login failed. Please try again.' });
+        setMessage(response.detail || 'Login failed. Please check your credentials.');
       }
     } catch (error) {
-      setErrors({ general: 'Network error. Please check your connection.' });
+      setMessage(error.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff6b35' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}></div>
+      </div>
+
+      <div className="max-w-md w-full relative z-10">
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
           onClick={() => setCurrentPage('home')}
-          className="absolute top-8 left-8 text-gray-600 hover:text-orange-600 transition-colors duration-300 flex items-center space-x-2"
+          className="absolute top-8 left-8 text-gray-600 hover:text-orange-600 transition-colors duration-300 flex items-center space-x-2 backdrop-blur-sm bg-white/30 rounded-lg px-3 py-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -107,7 +99,7 @@ const LoginPage = ({ setCurrentPage }) => {
           <span>Back to Home</span>
         </motion.button>
 
-        {/* Login Form */}
+        {/* Login Card */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -121,40 +113,40 @@ const LoginPage = ({ setCurrentPage }) => {
             transition={{ duration: 0.6 }}
             className="text-center mb-8"
           >
-            <h1 className="text-4xl font-bold text-orange-600 mb-2">Gawa</h1>
-            <p className="text-gray-600 text-lg">Welcome back to food-sharing</p>
+            <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">🍽️</span>
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
+              Gawa
+            </h1>
+            <p className="text-gray-600 text-lg">Welcome back to food sharing</p>
           </motion.div>
 
-          {/* Error Message */}
-          {errors.general && (
+          {/* Message */}
+          {message && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`mb-6 p-4 rounded-lg text-center ${
+                message.includes('successful') 
+                  ? 'bg-green-100 text-green-700' 
+                  : 'bg-red-100 text-red-700'
+              }`}
             >
-              {errors.general}
-            </motion.div>
-          )}
-
-          {/* Success Message */}
-          {successMessage && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6"
-            >
-              {successMessage}
+              {message}
             </motion.div>
           )}
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            onSubmit={handleSubmit}
+            className="space-y-6"
+          >
+            {/* Email */}
+            <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                 Email Address
               </label>
@@ -164,28 +156,18 @@ const LoginPage = ({ setCurrentPage }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
+                placeholder="Enter your email address"
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${
-                  errors.email ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-orange-400'
+                  errors.email ? 'border-red-500' : 'border-gray-300'
                 }`}
-                placeholder="Enter your email"
               />
               {errors.email && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-red-600 text-sm mt-1"
-                >
-                  {errors.email}
-                </motion.p>
+                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
               )}
-            </motion.div>
+            </div>
 
-            {/* Password Field */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
+            {/* Password */}
+            <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
                 Password
               </label>
@@ -195,42 +177,23 @@ const LoginPage = ({ setCurrentPage }) => {
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${
-                  errors.password ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-orange-400'
-                }`}
                 placeholder="Enter your password"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${
+                  errors.password ? 'border-red-500' : 'border-gray-300'
+                }`}
               />
               {errors.password && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-red-600 text-sm mt-1"
-                >
-                  {errors.password}
-                </motion.p>
+                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
               )}
-            </motion.div>
-
-            {/* Forgot Password Link */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-right"
-            >
-              <a href="#" className="text-orange-600 hover:text-orange-700 text-sm font-medium transition-colors duration-300">
-                Forgot your password?
-              </a>
-            </motion.div>
+            </div>
 
             {/* Submit Button */}
             <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -241,48 +204,26 @@ const LoginPage = ({ setCurrentPage }) => {
                 'Sign In'
               )}
             </motion.button>
-          </form>
+          </motion.form>
 
-          {/* Divider */}
+          {/* Signup Link */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="relative my-8"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-6 text-center"
           >
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Don't have an account?</span>
-            </div>
-          </motion.div>
-
-          {/* Sign Up Link */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="text-center"
-          >
-            <button
-              onClick={() => setCurrentPage('signup')}
-              className="text-orange-600 hover:text-orange-700 font-semibold transition-colors duration-300"
-            >
-              Create a new account
-            </button>
+            <p className="text-gray-600">
+              Don't have an account?{' '}
+              <button
+                onClick={() => setCurrentPage('signup')}
+                className="text-orange-600 hover:text-orange-700 font-semibold transition-colors duration-300"
+              >
+                Sign Up
+              </button>
+            </p>
           </motion.div>
         </motion.div>
-
-        {/* Footer Text */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="text-center text-gray-500 text-sm mt-6"
-        >
-          By signing in, you agree to our Terms of Service and Privacy Policy
-        </motion.p>
       </div>
     </div>
   );

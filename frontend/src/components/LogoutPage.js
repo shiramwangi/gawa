@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { logoutUser } from '../api/auth';
 
 const LogoutPage = ({ setCurrentPage }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [logoutMessage, setLogoutMessage] = useState('');
+  const [message, setMessage] = useState('');
   const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
@@ -25,54 +26,30 @@ const LogoutPage = ({ setCurrentPage }) => {
     setIsLoading(true);
     
     try {
-      // Get token from localStorage
-      const token = localStorage.getItem('access_token');
-      
-      if (token) {
-        // Call logout endpoint
-        const response = await fetch('http://localhost:8000/auth/logout', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (response.ok) {
-          setLogoutMessage('Logout successful! Redirecting to home...');
-        } else {
-          setLogoutMessage('Logout completed. Redirecting to home...');
-        }
-      } else {
-        setLogoutMessage('No active session. Redirecting to home...');
-      }
-
-      // Clear localStorage
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('user');
+      await logoutUser();
+      setMessage('Logged out successfully! Redirecting...');
       
       // Redirect to home after 2 seconds
       setTimeout(() => {
         setCurrentPage('home');
       }, 2000);
-
     } catch (error) {
-      setLogoutMessage('Logout completed. Redirecting to home...');
+      setMessage('Logout failed, but you have been logged out locally.');
       
-      // Clear localStorage even if API call fails
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('user');
-      
-      // Redirect to home after 2 seconds
+      // Redirect to home after 3 seconds even if logout fails
       setTimeout(() => {
         setCurrentPage('home');
-      }, 2000);
+      }, 3000);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleCancelLogout = () => {
+  const handleManualLogout = () => {
+    handleLogout();
+  };
+
+  const handleCancel = () => {
     setCurrentPage('home');
   };
 
@@ -84,7 +61,6 @@ const LogoutPage = ({ setCurrentPage }) => {
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff6b35' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         }}></div>
       </div>
-
 
       <div className="max-w-md w-full relative z-10">
         {/* Back Button */}
@@ -115,10 +91,13 @@ const LogoutPage = ({ setCurrentPage }) => {
             transition={{ duration: 0.6 }}
             className="mb-8"
           >
+            <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">🚪</span>
+            </div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
               Gawa
             </h1>
-            <p className="text-gray-600 text-lg">See you soon!</p>
+            <p className="text-gray-600 text-lg">Logging you out</p>
           </motion.div>
 
           {/* Logout Icon */}
@@ -142,14 +121,14 @@ const LogoutPage = ({ setCurrentPage }) => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mb-6"
           >
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Logging Out</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Ready to Leave?</h2>
             <p className="text-gray-600">
-              {logoutMessage || `You will be logged out in ${countdown} seconds...`}
+              {message || `You will be automatically logged out in ${countdown} seconds...`}
             </p>
           </motion.div>
 
           {/* Loading Spinner */}
-          {!logoutMessage && (
+          {!message && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -167,20 +146,44 @@ const LogoutPage = ({ setCurrentPage }) => {
             transition={{ duration: 0.6, delay: 0.5 }}
             className="space-y-4"
           >
-            {!logoutMessage ? (
-              <button
-                onClick={handleCancelLogout}
-                className="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold text-lg hover:bg-gray-200 transition-all duration-300 transform hover:scale-105"
-              >
-                Cancel Logout
-              </button>
+            {!message ? (
+              <>
+                <button
+                  onClick={handleManualLogout}
+                  disabled={isLoading}
+                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center justify-center space-x-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Logging Out...</span>
+                    </div>
+                  ) : (
+                    'Logout Now'
+                  )}
+                </button>
+                <button
+                  onClick={handleCancel}
+                  className="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold text-lg hover:bg-gray-200 transition-all duration-300 transform hover:scale-105"
+                >
+                  Cancel
+                </button>
+              </>
             ) : (
-              <button
-                onClick={() => setCurrentPage('home')}
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105"
-              >
-                Go to Home
-              </button>
+              <div className="space-y-3">
+                <button
+                  onClick={() => setCurrentPage('home')}
+                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105"
+                >
+                  Go to Home
+                </button>
+                <button
+                  onClick={() => setCurrentPage('login')}
+                  className="w-full bg-gray-100 text-gray-700 py-3 px-6 rounded-lg font-semibold text-lg hover:bg-gray-200 transition-all duration-300 transform hover:scale-105"
+                >
+                  Login Again
+                </button>
+              </div>
             )}
           </motion.div>
 
@@ -192,7 +195,7 @@ const LogoutPage = ({ setCurrentPage }) => {
             className="mt-6 text-center"
           >
             <p className="text-gray-500 text-sm">
-              Thank you for using Gawa! 
+              Thanks for using Gawa! 👋
             </p>
           </motion.div>
         </motion.div>
@@ -204,7 +207,7 @@ const LogoutPage = ({ setCurrentPage }) => {
           transition={{ duration: 0.8, delay: 0.7 }}
           className="text-center text-gray-500 text-sm mt-6"
         >
-          Come back soon for more delicious food sharing!
+          Your session will be securely terminated
         </motion.p>
       </div>
     </div>
