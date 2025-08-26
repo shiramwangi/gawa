@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import './App.css';
+import SignupPage from './components/SignupPage';
 
 // Navigation Component
-const Navigation = () => (
+const Navigation = ({ setCurrentPage }) => (
   <nav className="fixed top-0 w-full bg-gray-900/90 backdrop-blur-md shadow-sm z-50">
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex justify-between items-center py-4">
@@ -28,6 +29,20 @@ const Navigation = () => (
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-300 group-hover:w-full"></span>
           </a>
         </div>
+        <div className="flex items-center space-x-4">
+          <button 
+            onClick={() => setCurrentPage('home')}
+            className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-semibold"
+          >
+            Sign In
+          </button>
+          <button 
+            onClick={() => setCurrentPage('signup')}
+            className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105"
+          >
+            Sign Up
+          </button>
+        </div>
         <button className="md:hidden text-gray-300">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -39,7 +54,7 @@ const Navigation = () => (
 );
 
 // Hero Section Component
-const HeroSection = () => (
+const HeroSection = ({ setCurrentPage }) => (
   <section id="home" className="relative pt-20 pb-16 min-h-screen flex items-center overflow-hidden">
     {/* Blurred Background Image */}
     <div className="absolute inset-0">
@@ -118,10 +133,16 @@ const HeroSection = () => (
           transition={{ duration: 0.8, delay: 0.8 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <button className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl">
+          <button 
+            onClick={() => setCurrentPage('signup')}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
             Create account
           </button>
-          <button className="bg-transparent hover:bg-white/10 text-white border-2 border-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300">
+          <button 
+            onClick={() => setCurrentPage('signup')}
+            className="bg-transparent hover:bg-white/10 text-white border-2 border-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+          >
             Sign in
           </button>
         </motion.div>
@@ -565,7 +586,7 @@ const TestimonialsSection = () => (
 );
 
 // Final CTA Section Component
-const FinalCTASection = () => (
+const FinalCTASection = ({ setCurrentPage }) => (
   <section id="join-order" className="py-20 bg-indigo-600">
     <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
       <h2 className="text-4xl font-bold text-white mb-6">
@@ -581,7 +602,10 @@ const FinalCTASection = () => (
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         
-        <button className="group border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-white hover:text-indigo-600 transition-all duration-300 hover:scale-105 transform">
+        <button 
+          onClick={() => setCurrentPage('signup')}
+          className="group border-2 border-white text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full text-base sm:text-lg font-bold hover:bg-white hover:text-indigo-600 transition-all duration-300 hover:scale-105 transform"
+        >
           Join Us Now
           <span className="ml-2 group-hover:translate-x-1 transition-transform duration-300">→</span>
         </button>
@@ -669,14 +693,29 @@ const Footer = () => (
 
 // Main App Component
 function App() {
+  const [currentPage, setCurrentPage] = useState('home');
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'signup':
+        return <SignupPage setCurrentPage={setCurrentPage} />;
+      default:
+        return (
+          <>
+            <HeroSection setCurrentPage={setCurrentPage} />
+            <HowItWorksSection />
+            <TopRestaurantsSection />
+            <TestimonialsSection />
+            <FinalCTASection setCurrentPage={setCurrentPage} />
+          </>
+        );
+    }
+  };
+
   return (
     <div className="App">
-      <Navigation />
-      <HeroSection />
-      <HowItWorksSection />
-      <TopRestaurantsSection />
-      <TestimonialsSection />
-      <FinalCTASection />
+      <Navigation setCurrentPage={setCurrentPage} />
+      {renderPage()}
       <Footer />
     </div>
   );
