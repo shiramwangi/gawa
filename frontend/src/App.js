@@ -4,6 +4,12 @@ import './App.css';
 import SignupPage from './components/SignupPage';
 import LoginPage from './components/LoginPage';
 import LogoutPage from './components/LogoutPage';
+import CompleteProfilePage from './components/CompleteProfilePage';
+
+// Check if user is logged in
+const isLoggedIn = () => {
+  return localStorage.getItem('access_token') !== null;
+};
 
 // Navigation Component
 const Navigation = ({ setCurrentPage }) => (
@@ -50,6 +56,14 @@ const Navigation = ({ setCurrentPage }) => (
           >
             Logout
           </button>
+          {isLoggedIn() && (
+            <button
+              onClick={() => setCurrentPage('complete-profile')}
+              className="text-gray-300 hover:text-blue-400 transition-all duration-300 font-semibold border border-gray-600 px-4 py-2 rounded-lg hover:border-blue-400"
+            >
+              Complete Profile
+            </button>
+          )}
         </div>
         <button className="md:hidden text-gray-300">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -711,6 +725,8 @@ function App() {
         return <LoginPage setCurrentPage={setCurrentPage} />;
       case 'logout':
         return <LogoutPage setCurrentPage={setCurrentPage} />;
+      case 'complete-profile':
+        return <CompleteProfilePage setCurrentPage={setCurrentPage} />;
       default:
         return (
           <>

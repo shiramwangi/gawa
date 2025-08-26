@@ -3,7 +3,11 @@ import apiClient from './apiClient';
 // Register user
 export const registerUser = async (userData) => {
   const response = await apiClient.post('/auth/register', userData);
-  return response.json();
+  const data = await response.json();
+  
+  // For now, backend just returns a message, not tokens
+  // When backend is updated to return tokens, this will work automatically
+  return data;
 };
 
 // Login user

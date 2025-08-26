@@ -57,6 +57,13 @@ const SignupPage = ({ setCurrentPage }) => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
+    // Ensure all error values are strings
+    Object.keys(newErrors).forEach(key => {
+      if (typeof newErrors[key] !== 'string') {
+        newErrors[key] = String(newErrors[key]);
+      }
+    });
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -73,26 +80,48 @@ const SignupPage = ({ setCurrentPage }) => {
 
     try {
       const response = await registerUser({
-        first_name: formData.firstName,
-        last_name: formData.lastName,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
         password: formData.password
       });
 
-      if (response.access_token) {
-        setMessage('Registration successful! Redirecting to login...');
+      console.log('Registration response:', response);
+      console.log('Response type:', typeof response);
+      console.log('Response keys:', Object.keys(response || {}));
+      console.log('Response.message:', response?.message);
+      console.log('Response.detail:', response?.detail);
+
+      // Backend returns {"message": "Register endpoint"} for now
+      if (response && response.message) {
+        setMessage('Registration successful! Please complete your profile.');
         setTimeout(() => {
-          setCurrentPage('login');
+          setCurrentPage('complete-profile');
         }, 2000);
+      } else if (response && response.detail) {
+        // Handle validation errors or other error details
+        const errorMessage = Array.isArray(response.detail) 
+          ? response.detail[0].msg 
+          : (typeof response.detail === 'string' ? response.detail : 'Validation error');
+        console.log('Setting error message:', errorMessage);
+        setMessage(errorMessage);
       } else {
-        setMessage(response.detail || 'Registration failed. Please try again.');
+        setMessage('Registration failed. Please try again.');
       }
     } catch (error) {
-      setMessage(error.message || 'Registration failed. Please try again.');
+      console.error('Registration error:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error keys:', Object.keys(error || {}));
+      const errorMessage = error.message || error.detail || 'Registration failed. Please try again.';
+      console.log('Setting error message from catch:', errorMessage);
+      setMessage(typeof errorMessage === 'string' ? errorMessage : 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Ensure message is always a string
+  const safeMessage = typeof message === 'string' ? message : 'An error occurred';
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 flex items-center justify-center p-4 relative overflow-hidden">
@@ -142,17 +171,17 @@ const SignupPage = ({ setCurrentPage }) => {
           </motion.div>
 
           {/* Message */}
-          {message && (
+          {safeMessage && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className={`mb-6 p-4 rounded-lg text-center ${
-                message.includes('successful') 
+                safeMessage.includes('successful') 
                   ? 'bg-green-100 text-green-700' 
                   : 'bg-red-100 text-red-700'
               }`}
             >
-              {message}
+              {safeMessage}
             </motion.div>
           )}
 
@@ -181,7 +210,7 @@ const SignupPage = ({ setCurrentPage }) => {
                 }`}
               />
               {errors.firstName && (
-                <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
+                <p className="mt-1 text-sm text-red-600">{String(errors.firstName)}</p>
               )}
             </div>
 
@@ -202,7 +231,7 @@ const SignupPage = ({ setCurrentPage }) => {
                 }`}
               />
               {errors.lastName && (
-                <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
+                <p className="mt-1 text-sm text-red-600">{String(errors.lastName)}</p>
               )}
             </div>
 
@@ -223,7 +252,7 @@ const SignupPage = ({ setCurrentPage }) => {
                 }`}
               />
               {errors.email && (
-                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                <p className="mt-1 text-sm text-red-600">{String(errors.email)}</p>
               )}
             </div>
 
@@ -244,7 +273,7 @@ const SignupPage = ({ setCurrentPage }) => {
                 }`}
               />
               {errors.password && (
-                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                <p className="mt-1 text-sm text-red-600">{String(errors.password)}</p>
               )}
             </div>
 
@@ -265,7 +294,7 @@ const SignupPage = ({ setCurrentPage }) => {
                 }`}
               />
               {errors.confirmPassword && (
-                <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                <p className="mt-1 text-sm text-red-600">{String(errors.confirmPassword)}</p>
               )}
             </div>
 
