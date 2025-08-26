@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import './App.css';
 import SignupPage from './components/SignupPage';
+import LoginPage from './components/LoginPage';
 
 // Navigation Component
 const Navigation = ({ setCurrentPage }) => (
@@ -31,7 +32,7 @@ const Navigation = ({ setCurrentPage }) => (
         </div>
         <div className="flex items-center space-x-4">
           <button 
-            onClick={() => setCurrentPage('home')}
+            onClick={() => setCurrentPage('login')}
             className="text-gray-300 hover:text-cyan-400 transition-all duration-300 font-semibold"
           >
             Sign In
@@ -140,7 +141,7 @@ const HeroSection = ({ setCurrentPage }) => (
             Create account
           </button>
           <button 
-            onClick={() => setCurrentPage('signup')}
+            onClick={() => setCurrentPage('login')}
             className="bg-transparent hover:bg-white/10 text-white border-2 border-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
           >
             Sign in
@@ -699,6 +700,8 @@ function App() {
     switch (currentPage) {
       case 'signup':
         return <SignupPage setCurrentPage={setCurrentPage} />;
+      case 'login':
+        return <LoginPage setCurrentPage={setCurrentPage} />;
       default:
         return (
           <>

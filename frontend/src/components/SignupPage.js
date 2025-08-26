@@ -191,7 +191,7 @@ const SignupPage = ({ setCurrentPage }) => {
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all ${
                     errors.firstName ? 'border-red-500' : 'border-gray-300'
                   }`}
-                  placeholder="John"
+                                       placeholder="Enter your first name"
                 />
                 {errors.firstName && (
                   <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
@@ -210,7 +210,7 @@ const SignupPage = ({ setCurrentPage }) => {
                   className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all ${
                     errors.lastName ? 'border-red-500' : 'border-gray-300'
                   }`}
-                  placeholder="Doe"
+                                       placeholder="Enter your last name"
                 />
                 {errors.lastName && (
                   <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
@@ -231,7 +231,7 @@ const SignupPage = ({ setCurrentPage }) => {
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all ${
                   errors.email ? 'border-red-500' : 'border-gray-300'
                 }`}
-                placeholder="john.doe@example.com"
+                                     placeholder="Enter your email address"
               />
               {errors.email && (
                 <p className="text-red-500 text-sm mt-1">{errors.email}</p>
