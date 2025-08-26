@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 router = APIRouter()
@@ -6,31 +6,25 @@ router = APIRouter()
 security = HTTPBearer()
 
 @router.get("/")
-async def get_orders():
-    """Get all orders"""
-    return {"message": "Get all orders endpoint"}
+async def list_orders():
+    return {"orders": []}
+
+@router.post("/")
+async def create_order(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    return {"message": "Order created"}
 
 @router.get("/{order_id}")
 async def get_order(order_id: int):
-    """Get order by ID"""
-    return {"message": f"Get order {order_id} endpoint"}
+    return {"order": {"id": order_id}}
 
-@router.post("/")
-async def create_order():
-    """Create a new order"""
-    return {"message": "Create order endpoint"}
+@router.post("/{order_id}/join")
+async def join_order(order_id: int, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    return {"message": f"Joined order {order_id}"}
 
-@router.put("/{order_id}")
-async def update_order(order_id: int):
-    """Update order by ID"""
-    return {"message": f"Update order {order_id} endpoint"}
+@router.post("/{order_id}/leave")
+async def leave_order(order_id: int, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    return {"message": f"Left order {order_id}"}
 
-@router.delete("/{order_id}")
-async def delete_order(order_id: int):
-    """Delete order by ID"""
-    return {"message": f"Delete order {order_id} endpoint"}
-
-@router.get("/user/{user_id}")
-async def get_user_orders(user_id: int):
-    """Get orders for a specific user"""
-    return {"message": f"Get orders for user {user_id} endpoint"}
+@router.put("/{order_id}/complete")
+async def complete_order(order_id: int, credentials: HTTPAuthorizationCredentials = Depends(security)):
+    return {"message": f"Order {order_id} marked complete"}
