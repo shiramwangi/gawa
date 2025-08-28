@@ -1,10 +1,34 @@
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
+*.pyd
+*.sqlite3
+*.db
 
-# Virtual environment
+# Environments
+venv/
 .venv/
-
-# Environment variables
 .env
+*.env
+
+# IDEs
+.vscode/
+.idea/
+
+# Cache / logs
+*.log
+*.pot
+*.pyc
+.mypy_cache/
+.pytest_cache/
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
