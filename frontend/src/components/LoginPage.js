@@ -252,3 +252,8 @@ const LoginPage = ({ setCurrentPage }) => {
 };
 
 export default LoginPage;
+
+
+
+
+
