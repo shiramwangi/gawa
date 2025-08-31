@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+<<<<<<< HEAD
+=======
+import { loginUser } from '../api/auth';
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
 
 const LoginPage = ({ setCurrentPage }) => {
   const [formData, setFormData] = useState({
@@ -9,7 +13,10 @@ const LoginPage = ({ setCurrentPage }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
+<<<<<<< HEAD
   const [showPassword, setShowPassword] = useState(false);
+=======
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,6 +61,7 @@ const LoginPage = ({ setCurrentPage }) => {
     setIsLoading(true);
     setMessage('');
 
+<<<<<<< HEAD
     // Simulate API call
     setTimeout(() => {
       setMessage('Login successful! Redirecting...');
@@ -67,18 +75,59 @@ const LoginPage = ({ setCurrentPage }) => {
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
+=======
+    try {
+      const response = await loginUser({
+        email: formData.email,
+        password: formData.password
+      });
+
+      if (response.access_token) {
+        setMessage('Login successful! Redirecting to home...');
+        setTimeout(() => {
+          setCurrentPage('home');
+        }, 2000);
+      } else {
+        setMessage(response.detail || 'Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      setMessage(error.message || 'Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff6b35' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}></div>
+      </div>
+
+      <div className="max-w-md w-full relative z-10">
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
           onClick={() => setCurrentPage('home')}
+<<<<<<< HEAD
           className="absolute top-8 left-8 text-gray-400 hover:text-orange-500 transition-colors duration-300 flex items-center space-x-2"
+=======
+          className="absolute top-8 left-8 text-gray-600 hover:text-orange-600 transition-colors duration-300 flex items-center space-x-2 backdrop-blur-sm bg-white/30 rounded-lg px-3 py-2"
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
+<<<<<<< HEAD
           <span>Back</span>
+=======
+          <span>Back to Home</span>
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
         </motion.button>
 
         {/* Login Card */}
@@ -86,17 +135,33 @@ const LoginPage = ({ setCurrentPage }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
+<<<<<<< HEAD
           className="bg-gray-800 rounded-3xl p-8 shadow-2xl"
         >
           {/* Header */}
+=======
+          className="bg-white rounded-2xl shadow-2xl p-8"
+        >
+          {/* Logo and Header */}
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-8"
           >
+<<<<<<< HEAD
             <h1 className="text-3xl font-bold text-white mb-2">Sign In</h1>
             <p className="text-gray-400">Welcome back! Enter your credentials to access your account</p>
+=======
+            <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">🍽️</span>
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
+              Gawa
+            </h1>
+            <p className="text-gray-600 text-lg">Welcome back to food sharing</p>
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
           </motion.div>
 
           {/* Message */}
@@ -104,10 +169,17 @@ const LoginPage = ({ setCurrentPage }) => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
+<<<<<<< HEAD
               className={`mb-6 p-4 rounded-xl text-center ${
                 message.includes('successful') 
                   ? 'bg-green-900/20 text-green-400 border border-green-500/30' 
                   : 'bg-red-900/20 text-red-400 border border-red-500/30'
+=======
+              className={`mb-6 p-4 rounded-lg text-center ${
+                message.includes('successful') 
+                  ? 'bg-green-100 text-green-700' 
+                  : 'bg-red-100 text-red-700'
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               }`}
             >
               {message}
@@ -116,16 +188,26 @@ const LoginPage = ({ setCurrentPage }) => {
 
           {/* Login Form */}
           <motion.form
+<<<<<<< HEAD
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+=======
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
             transition={{ duration: 0.6, delay: 0.2 }}
             onSubmit={handleSubmit}
             className="space-y-6"
           >
             {/* Email */}
             <div>
+<<<<<<< HEAD
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
+=======
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               </label>
               <input
                 type="email"
@@ -133,6 +215,7 @@ const LoginPage = ({ setCurrentPage }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
+<<<<<<< HEAD
                 placeholder="example@gmail.com"
                 className={`w-full px-4 py-4 bg-gray-700 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-400 ${
                   errors.email ? 'border-red-500' : 'border-gray-600'
@@ -140,11 +223,21 @@ const LoginPage = ({ setCurrentPage }) => {
               />
               {errors.email && (
                 <p className="mt-2 text-sm text-red-400">{errors.email}</p>
+=======
+                placeholder="Enter your email address"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${
+                  errors.email ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               )}
             </div>
 
             {/* Password */}
             <div>
+<<<<<<< HEAD
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
@@ -179,6 +272,24 @@ const LoginPage = ({ setCurrentPage }) => {
               </div>
               {errors.password && (
                 <p className="mt-2 text-sm text-red-400">{errors.password}</p>
+=======
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="Enter your password"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${
+                  errors.password ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               )}
             </div>
 
@@ -188,7 +299,11 @@ const LoginPage = ({ setCurrentPage }) => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
+<<<<<<< HEAD
               className="w-full bg-orange-500 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-orange-600 transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+=======
+              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
             >
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -201,6 +316,7 @@ const LoginPage = ({ setCurrentPage }) => {
             </motion.button>
           </motion.form>
 
+<<<<<<< HEAD
           {/* Divider */}
           <div className="my-6 flex items-center">
             <div className="flex-1 border-t border-gray-600"></div>
@@ -228,11 +344,14 @@ const LoginPage = ({ setCurrentPage }) => {
             </button>
           </div>
 
+=======
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
           {/* Signup Link */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
+<<<<<<< HEAD
             className="mt-8 text-center"
           >
             <p className="text-gray-400">
@@ -240,6 +359,15 @@ const LoginPage = ({ setCurrentPage }) => {
               <button
                 onClick={() => setCurrentPage('signup')}
                 className="text-orange-500 hover:text-orange-400 font-semibold transition-colors duration-300"
+=======
+            className="mt-6 text-center"
+          >
+            <p className="text-gray-600">
+              Don't have an account?{' '}
+              <button
+                onClick={() => setCurrentPage('signup')}
+                className="text-orange-600 hover:text-orange-700 font-semibold transition-colors duration-300"
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               >
                 Sign Up
               </button>
@@ -252,8 +380,11 @@ const LoginPage = ({ setCurrentPage }) => {
 };
 
 export default LoginPage;
+<<<<<<< HEAD
 
 
 
 
 
+=======
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a

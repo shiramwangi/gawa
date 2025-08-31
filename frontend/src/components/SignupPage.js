@@ -1,9 +1,18 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+<<<<<<< HEAD
 
 const SignupPage = ({ setCurrentPage }) => {
   const [formData, setFormData] = useState({
     name: '',
+=======
+import { registerUser } from '../api/auth';
+
+const SignupPage = ({ setCurrentPage }) => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
     email: '',
     password: '',
     confirmPassword: ''
@@ -11,8 +20,11 @@ const SignupPage = ({ setCurrentPage }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [errors, setErrors] = useState({});
+<<<<<<< HEAD
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+=======
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,8 +45,17 @@ const SignupPage = ({ setCurrentPage }) => {
   const validateForm = () => {
     const newErrors = {};
 
+<<<<<<< HEAD
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
+=======
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
     }
 
     if (!formData.email.trim()) {
@@ -53,6 +74,16 @@ const SignupPage = ({ setCurrentPage }) => {
       newErrors.confirmPassword = 'Passwords do not match';
     }
 
+<<<<<<< HEAD
+=======
+    // Ensure all error values are strings
+    Object.keys(newErrors).forEach(key => {
+      if (typeof newErrors[key] !== 'string') {
+        newErrors[key] = String(newErrors[key]);
+      }
+    });
+
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -67,6 +98,7 @@ const SignupPage = ({ setCurrentPage }) => {
     setIsLoading(true);
     setMessage('');
 
+<<<<<<< HEAD
     // Simulate API call
     setTimeout(() => {
       setMessage('Registration successful! Please complete your profile.');
@@ -80,18 +112,83 @@ const SignupPage = ({ setCurrentPage }) => {
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
       <div className="max-w-md w-full">
+=======
+    try {
+      const response = await registerUser({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password
+      });
+
+      console.log('Registration response:', response);
+      console.log('Response type:', typeof response);
+      console.log('Response keys:', Object.keys(response || {}));
+      console.log('Response.message:', response?.message);
+      console.log('Response.detail:', response?.detail);
+
+      // Backend returns {"message": "Register endpoint"} for now
+      if (response && response.message) {
+        setMessage('Registration successful! Please complete your profile.');
+        setTimeout(() => {
+          setCurrentPage('complete-profile');
+        }, 2000);
+      } else if (response && response.detail) {
+        // Handle validation errors or other error details
+        const errorMessage = Array.isArray(response.detail) 
+          ? response.detail[0].msg 
+          : (typeof response.detail === 'string' ? response.detail : 'Validation error');
+        console.log('Setting error message:', errorMessage);
+        setMessage(errorMessage);
+      } else {
+        setMessage('Registration failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error keys:', Object.keys(error || {}));
+      const errorMessage = error.message || error.detail || 'Registration failed. Please try again.';
+      console.log('Setting error message from catch:', errorMessage);
+      setMessage(typeof errorMessage === 'string' ? errorMessage : 'Registration failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Ensure message is always a string
+  const safeMessage = typeof message === 'string' ? message : 'An error occurred';
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ff6b35' fill-opacity='0.4'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }}></div>
+      </div>
+
+      <div className="max-w-md w-full relative z-10">
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
           onClick={() => setCurrentPage('home')}
+<<<<<<< HEAD
           className="absolute top-8 left-8 text-gray-400 hover:text-orange-500 transition-colors duration-300 flex items-center space-x-2"
+=======
+          className="absolute top-8 left-8 text-gray-600 hover:text-orange-600 transition-colors duration-300 flex items-center space-x-2 backdrop-blur-sm bg-white/30 rounded-lg px-3 py-2"
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
+<<<<<<< HEAD
           <span>Back</span>
+=======
+          <span>Back to Home</span>
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
         </motion.button>
 
         {/* Signup Card */}
@@ -99,15 +196,22 @@ const SignupPage = ({ setCurrentPage }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
+<<<<<<< HEAD
           className="bg-gray-800 rounded-3xl p-8 shadow-2xl"
         >
           {/* Header */}
+=======
+          className="bg-white rounded-2xl shadow-2xl p-8"
+        >
+          {/* Logo and Header */}
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center mb-8"
           >
+<<<<<<< HEAD
             <h1 className="text-3xl font-bold text-white mb-2">Sign up</h1>
             <p className="text-gray-400">Enter your details to create an account</p>
           </motion.div>
@@ -124,17 +228,46 @@ const SignupPage = ({ setCurrentPage }) => {
               }`}
             >
               {message}
+=======
+            <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-3xl">🍽️</span>
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
+              Gawa
+            </h1>
+            <p className="text-gray-600 text-lg">Join the food sharing community</p>
+          </motion.div>
+
+          {/* Message */}
+          {safeMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`mb-6 p-4 rounded-lg text-center ${
+                safeMessage.includes('successful') 
+                  ? 'bg-green-100 text-green-700' 
+                  : 'bg-red-100 text-red-700'
+              }`}
+            >
+              {safeMessage}
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
             </motion.div>
           )}
 
           {/* Signup Form */}
           <motion.form
+<<<<<<< HEAD
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
+=======
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
             transition={{ duration: 0.6, delay: 0.2 }}
             onSubmit={handleSubmit}
             className="space-y-6"
           >
+<<<<<<< HEAD
             {/* Name */}
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
@@ -153,13 +286,59 @@ const SignupPage = ({ setCurrentPage }) => {
               />
               {errors.name && (
                 <p className="mt-2 text-sm text-red-400">{errors.name}</p>
+=======
+            {/* First Name */}
+            <div>
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+                First Name
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                placeholder="Enter your first name"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${
+                  errors.firstName ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+              {errors.firstName && (
+                <p className="mt-1 text-sm text-red-600">{String(errors.firstName)}</p>
+              )}
+            </div>
+
+            {/* Last Name */}
+            <div>
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+                Last Name
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                placeholder="Enter your last name"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${
+                  errors.lastName ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+              {errors.lastName && (
+                <p className="mt-1 text-sm text-red-600">{String(errors.lastName)}</p>
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               )}
             </div>
 
             {/* Email */}
             <div>
+<<<<<<< HEAD
               <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
                 Email
+=======
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Email Address
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               </label>
               <input
                 type="email"
@@ -167,6 +346,7 @@ const SignupPage = ({ setCurrentPage }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
+<<<<<<< HEAD
                 placeholder="example@gmail.com"
                 className={`w-full px-4 py-4 bg-gray-700 border rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 text-white placeholder-gray-400 ${
                   errors.email ? 'border-red-500' : 'border-gray-600'
@@ -174,11 +354,21 @@ const SignupPage = ({ setCurrentPage }) => {
               />
               {errors.email && (
                 <p className="mt-2 text-sm text-red-400">{errors.email}</p>
+=======
+                placeholder="Enter your email address"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${
+                  errors.email ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-600">{String(errors.email)}</p>
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               )}
             </div>
 
             {/* Password */}
             <div>
+<<<<<<< HEAD
               <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
@@ -213,11 +403,30 @@ const SignupPage = ({ setCurrentPage }) => {
               </div>
               {errors.password && (
                 <p className="mt-2 text-sm text-red-400">{errors.password}</p>
+=======
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder="Create a password"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${
+                  errors.password ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-600">{String(errors.password)}</p>
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               )}
             </div>
 
             {/* Confirm Password */}
             <div>
+<<<<<<< HEAD
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
                 Confirm Password
               </label>
@@ -252,6 +461,24 @@ const SignupPage = ({ setCurrentPage }) => {
               </div>
               {errors.confirmPassword && (
                 <p className="mt-2 text-sm text-red-400">{errors.confirmPassword}</p>
+=======
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                placeholder="Confirm your password"
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${
+                  errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                }`}
+              />
+              {errors.confirmPassword && (
+                <p className="mt-1 text-sm text-red-600">{String(errors.confirmPassword)}</p>
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               )}
             </div>
 
@@ -261,7 +488,11 @@ const SignupPage = ({ setCurrentPage }) => {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={isLoading}
+<<<<<<< HEAD
               className="w-full bg-orange-500 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-orange-600 transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+=======
+              className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-lg font-semibold text-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
             >
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -269,11 +500,16 @@ const SignupPage = ({ setCurrentPage }) => {
                   <span>Creating Account...</span>
                 </div>
               ) : (
+<<<<<<< HEAD
                 'Sign up'
+=======
+                'Create Account'
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               )}
             </motion.button>
           </motion.form>
 
+<<<<<<< HEAD
           {/* Divider */}
           <div className="my-6 flex items-center">
             <div className="flex-1 border-t border-gray-600"></div>
@@ -301,11 +537,14 @@ const SignupPage = ({ setCurrentPage }) => {
             </button>
           </div>
 
+=======
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
           {/* Login Link */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4 }}
+<<<<<<< HEAD
             className="mt-8 text-center"
           >
             <p className="text-gray-400">
@@ -313,6 +552,15 @@ const SignupPage = ({ setCurrentPage }) => {
               <button
                 onClick={() => setCurrentPage('login')}
                 className="text-orange-500 hover:text-orange-400 font-semibold transition-colors duration-300"
+=======
+            className="mt-6 text-center"
+          >
+            <p className="text-gray-600">
+              Already have an account?{' '}
+              <button
+                onClick={() => setCurrentPage('login')}
+                className="text-orange-600 hover:text-orange-700 font-semibold transition-colors duration-300"
+>>>>>>> 4acd67930180ed404fd2f3a99f94eae06df46c3a
               >
                 Sign In
               </button>
