@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 
 const LogoutPage = ({ setCurrentPage }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     setIsLoading(true);
     
     // Simulate logout process
@@ -17,7 +17,7 @@ const LogoutPage = ({ setCurrentPage }) => {
       setIsLoading(false);
       setCurrentPage('home');
     }, 1500);
-  };
+  }, [setCurrentPage]);
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">

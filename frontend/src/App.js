@@ -5,6 +5,21 @@ import SignupPage from './components/SignupPage';
 import LoginPage from './components/LoginPage';
 import LogoutPage from './components/LogoutPage';
 import CompleteProfilePage from './components/CompleteProfilePage';
+import RestaurantsPage from './components/RestaurantsPage';
+import FoodSharingPage from './components/FoodSharingPage';
+import CarnivoreMenuPage from './components/CarnivoreMenuPage';
+import JavaHouseMenuPage from './components/JavaHouseMenuPage';
+import TamarindMenuPage from './components/TamarindMenuPage';
+import ArtCafeMenuPage from './components/ArtCafeMenuPage';
+import NyamaMamaMenuPage from './components/NyamaMamaMenuPage';
+import KFCMenuPage from './components/KFCMenuPage';
+import PizzaHutMenuPage from './components/PizzaHutMenuPage';
+import BurgerKingMenuPage from './components/BurgerKingMenuPage';
+import SubwayMenuPage from './components/SubwayMenuPage';
+import DominosMenuPage from './components/DominosMenuPage';
+import PizzaInnMenuPage from './components/PizzaInnMenuPage';
+import ChickenInnMenuPage from './components/ChickenInnMenuPage';
+import PapaJohnsMenuPage from './components/PapaJohnsMenuPage';
 
 // Check if user is logged in
 const isLoggedIn = () => {
@@ -26,9 +41,12 @@ const Navigation = ({ setCurrentPage }) => (
           <a href="#explore" className="text-gray-700 hover:text-orange-600 transition-all duration-300 font-semibold">
             Explore Foods
           </a>
-          <a href="#restaurants" className="text-gray-700 hover:text-orange-600 transition-all duration-300 font-semibold">
+          <button 
+            onClick={() => setCurrentPage('restaurants')}
+            className="text-gray-700 hover:text-orange-600 transition-all duration-300 font-semibold"
+          >
             Restaurants
-          </a>
+          </button>
         </div>
         <div className="flex items-center space-x-4">
           <button className="text-gray-700 hover:text-orange-600 transition-colors duration-300">
@@ -65,20 +83,20 @@ const HeroSection = ({ setCurrentPage }) => (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="grid lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-8">
-          <motion.h1 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+        <motion.h1 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
             className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight"
           >
             Love Food? Share It with{' '}
             <span className="text-orange-600">Gawa!</span>
-          </motion.h1>
-          
+        </motion.h1>
+        
           <motion.p 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
             className="text-xl text-gray-600 leading-relaxed"
           >
             Share your favorite meals from the best restaurants with friends and family. 
@@ -86,10 +104,10 @@ const HeroSection = ({ setCurrentPage }) => (
           </motion.p>
 
           {/* Search Bar */}
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
             className="relative"
           >
             <div className="relative">
@@ -114,11 +132,11 @@ const HeroSection = ({ setCurrentPage }) => (
                 >
                   {item}
                 </button>
-              ))}
-            </div>
-          </motion.div>
+            ))}
+          </div>
+        </motion.div>
         </div>
-
+        
         <motion.div 
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -164,8 +182,8 @@ const SpecialOffersSection = () => (
         <button className="mt-8 px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:border-orange-500 hover:text-orange-600 transition-all duration-300">
           Share Deals
         </button>
-      </div>
-    </div>
+              </div>
+            </div>
   </section>
 );
 
@@ -176,18 +194,18 @@ const PopularFoodsSection = () => (
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold text-gray-900 mb-4">Popular Foods to Share</h2>
         <p className="text-xl text-gray-600">Discover the most loved dishes that people love to share from top restaurants</p>
-      </div>
-      
+        </div>
+        
       <div className="grid md:grid-cols-3 gap-8">
         {[
           { name: 'Delicious Pizza', image: '/images/pizza.jpg', price: '$12.99' },
           { name: 'Juicy Burger', image: '/images/burger.jpg', price: '$8.99' },
           { name: 'Crispy Chicken', image: '/images/fried-chickenn.jpg', price: '$10.99' }
         ].map((food, index) => (
-          <motion.div
+      <motion.div 
             key={index}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: index * 0.1 }}
             className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2"
           >
@@ -200,9 +218,9 @@ const PopularFoodsSection = () => (
                 <button className="bg-orange-500 text-white px-6 py-2 rounded-full hover:bg-orange-600 transition-colors duration-300">
                   Share This
                 </button>
-              </div>
-            </div>
-          </motion.div>
+          </div>
+        </div>
+      </motion.div>
         ))}
       </div>
     </div>
@@ -225,7 +243,7 @@ const TopRestaurantsSection = () => (
           { name: 'Burger King', image: '/images/top-restaurants/burger-king.jpeg', rating: '4.7' },
           { name: 'Subway', image: '/images/top-restaurants/subway.jpg', rating: '4.5' }
         ].map((restaurant, index) => (
-          <motion.div
+      <motion.div 
             key={index}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -260,7 +278,7 @@ const ServiceSection = () => (
         <div className="space-y-6">
           <h2 className="text-4xl font-bold text-gray-900">
             Share Your Food Adventures 24/7 with Gawa!
-          </h2>
+        </h2>
           <p className="text-xl text-gray-600 leading-relaxed">
             Whether it's breakfast, lunch, dinner, or late-night cravings, share your food discoveries 
             anytime with the Gawa community. Connect with food lovers and discover new favorites together!
@@ -273,22 +291,22 @@ const ServiceSection = () => (
               Explore Community
             </button>
           </div>
-        </div>
-        
+      </div>
+      
         <div className="relative">
           <div className="bg-orange-100 rounded-3xl p-8">
             <div className="text-center">
               <div className="w-24 h-24 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
                 <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
+                  </svg>
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Community First</h3>
               <p className="text-gray-600">Share, connect, and discover with food lovers!</p>
+              </div>
             </div>
-          </div>
-        </div>
-      </div>
+              </div>
+            </div>
     </div>
   </section>
 );
@@ -338,6 +356,8 @@ const LandingPage = ({ setCurrentPage }) => (
 // Main App Component
 const App = () => {
   const [currentPage, setCurrentPage] = useState('home');
+  const [selectedFood, setSelectedFood] = useState(null);
+  const [selectedRestaurant, setSelectedRestaurant] = useState(null);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -349,6 +369,97 @@ const App = () => {
         return <LogoutPage setCurrentPage={setCurrentPage} />;
       case 'complete-profile':
         return <CompleteProfilePage setCurrentPage={setCurrentPage} />;
+      case 'restaurants':
+        return <RestaurantsPage 
+          setCurrentPage={setCurrentPage} 
+          setSelectedFood={setSelectedFood}
+          setSelectedRestaurant={setSelectedRestaurant}
+        />;
+      case 'carnivore-menu':
+        return <CarnivoreMenuPage 
+          setCurrentPage={setCurrentPage} 
+          setSelectedFood={setSelectedFood}
+          setSelectedRestaurant={setSelectedRestaurant}
+        />;
+      case 'java-house-menu':
+        return <JavaHouseMenuPage 
+          setCurrentPage={setCurrentPage} 
+          setSelectedFood={setSelectedFood}
+          setSelectedRestaurant={setSelectedRestaurant}
+        />;
+      case 'tamarind-menu':
+        return <TamarindMenuPage 
+          setCurrentPage={setCurrentPage} 
+          setSelectedFood={setSelectedFood}
+          setSelectedRestaurant={setSelectedRestaurant}
+        />;
+      case 'artcafe-menu':
+        return <ArtCafeMenuPage 
+          setCurrentPage={setCurrentPage} 
+          setSelectedFood={setSelectedFood}
+          setSelectedRestaurant={setSelectedRestaurant}
+        />;
+      case 'nyama-mama-menu':
+        return <NyamaMamaMenuPage 
+          setCurrentPage={setCurrentPage} 
+          setSelectedFood={setSelectedFood}
+          setSelectedRestaurant={setSelectedRestaurant}
+        />;
+      case 'kfc-menu':
+        return <KFCMenuPage 
+          setCurrentPage={setCurrentPage} 
+          setSelectedFood={setSelectedFood}
+          setSelectedRestaurant={setSelectedRestaurant}
+        />;
+      case 'pizza-hut-menu':
+        return <PizzaHutMenuPage 
+          setCurrentPage={setCurrentPage} 
+          setSelectedFood={setSelectedFood}
+          setSelectedRestaurant={setSelectedRestaurant}
+        />;
+      case 'burger-king-menu':
+        return <BurgerKingMenuPage 
+          setCurrentPage={setCurrentPage} 
+          setSelectedFood={setSelectedFood}
+          setSelectedRestaurant={setSelectedRestaurant}
+        />;
+      case 'subway-menu':
+        return <SubwayMenuPage 
+          setCurrentPage={setCurrentPage} 
+          setSelectedFood={setSelectedFood}
+          setSelectedRestaurant={setSelectedRestaurant}
+        />;
+      case 'dominos-menu':
+        return <DominosMenuPage 
+          setCurrentPage={setCurrentPage} 
+          setSelectedFood={setSelectedFood}
+          setSelectedRestaurant={setSelectedRestaurant}
+        />;
+                    case 'pizza-inn-menu':
+                return <PizzaInnMenuPage
+                  setCurrentPage={setCurrentPage}
+                  setSelectedFood={setSelectedFood}
+                  setSelectedRestaurant={setSelectedRestaurant}
+                />;
+              case 'chicken-inn-menu':
+                return <ChickenInnMenuPage
+                  setCurrentPage={setCurrentPage}
+                  setSelectedFood={setSelectedFood}
+                  setSelectedRestaurant={setSelectedRestaurant}
+                />;
+              case 'papa-johns-menu':
+                return <PapaJohnsMenuPage
+                  setCurrentPage={setCurrentPage}
+                  setSelectedFood={setSelectedFood}
+                  setSelectedRestaurant={setSelectedRestaurant}
+                />;
+      case 'food-sharing':
+        return <FoodSharingPage 
+          setCurrentPage={setCurrentPage}
+          selectedFood={selectedFood}
+          selectedRestaurant={selectedRestaurant}
+          onBack={() => setCurrentPage('restaurants')}
+        />;
       default:
         return <LandingPage setCurrentPage={setCurrentPage} />;
     }
