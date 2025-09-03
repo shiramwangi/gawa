@@ -1,22 +1,38 @@
-from fastapi import APIRouter, Depends, Request
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+# backend/payment.py
 
-router = APIRouter()
+from typing import Dict
 
-security = HTTPBearer()
+class PaymentService:
+    def __init__(self, provider: str = "mock"):
+        self.provider = provider
 
-@router.post("/stkpush")
-async def stkpush(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """Trigger an M-Pesa STK push to the user's phone."""
-    return {"message": "STK push initiated", "payment_id": 1}
+    def initialize_payment(self, user_id: int, amount: float, currency: str = "KES") -> Dict:
+        """
+        Start a new payment.
+        Replace with real payment gateway API (e.g., Stripe, Mpesa).
+        """
+        return {
+            "status": "success",
+            "message": f"Payment initialized for user {user_id}",
+            "amount": amount,
+            "currency": currency,
+            "transaction_id": "txn_123456"
+        }
 
-@router.post("/callback")
-async def mpesa_callback(request: Request):
-    """Handle M-Pesa payment confirmation callback (no auth)."""
-    payload = await request.json()
-    return {"status": "received", "payload": payload}
+    def verify_payment(self, transaction_id: str) -> Dict:
+        """
+        Verify the status of a payment.
+        """
+        return {
+            "status": "verified",
+            "transaction_id": transaction_id
+        }
 
-@router.get("/{payment_id}")
-async def get_payment(payment_id: int, credentials: HTTPAuthorizationCredentials = Depends(security)):
-    """Check payment status by ID."""
-    return {"payment": {"id": payment_id, "status": "pending"}}
+    def handle_callback(self, data: Dict) -> Dict:
+        """
+        Handle asynchronous callbacks from the payment provider.
+        """
+        return {
+            "status": "callback_received",
+            "data": data
+        }
