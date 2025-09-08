@@ -45,3 +45,4 @@ class Delivery(Base):
     delivery_notes = Column(Text, nullable=True)
     customer_rating = Column(Integer, nullable=True)  # 1-5 stars
     customer_feedback = Column(Text, nullable=True)
+

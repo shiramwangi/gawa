@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 from database import get_db
 from models.user import User
-from schemas.user import UserUpdate, User as UserSchema
+from schemas.user import UserUpdate, UserOut as UserSchema
 from utils.security import get_current_user
 
 router = APIRouter()
@@ -49,8 +49,8 @@ async def update_user(
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    # Update only provided fields
-    update_data = user_update.dict(exclude_unset=True)
+    # Update only provided fields (Pydantic v2: model_dump)
+    update_data = user_update.model_dump(exclude_unset=True)
     for field, value in update_data.items():
         setattr(user, field, value)
     
@@ -73,3 +73,4 @@ async def delete_user(
     db.delete(user)
     db.commit()
     return {"message": "User deleted successfully"}
+

@@ -33,10 +33,11 @@ class Order(Base):
     
     # Order details
     status = Column(Enum(OrderStatus), default=OrderStatus.PENDING)
-    subtotal = Column(Float, nullable=False)
+    target_amount = Column(Float, nullable=False)
+    current_amount = Column(Float, default=0.0)
     delivery_fee = Column(Float, default=0.0)
     tax = Column(Float, default=0.0)
-    total_amount = Column(Float, nullable=False)
+    total_amount = Column(Float, default=0.0)
     
     # Delivery address
     delivery_address = Column(Text, nullable=False)

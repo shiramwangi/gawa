@@ -21,3 +21,4 @@ class User(Base):
     address = Column(Text, nullable=True)
     city = Column(String, nullable=True)
     postal_code = Column(String, nullable=True)
+

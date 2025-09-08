@@ -1,7 +1,18 @@
-# Import all schemas
-from .user import User, UserCreate, UserUpdate, UserLogin, Token, TokenData
-from .restaurant import Restaurant, RestaurantCreate, RestaurantUpdate, RestaurantWithMeals
-from .meal import Meal, MealCreate, MealUpdate
-from .order import Order, OrderCreate, OrderUpdate, OrderItem, OrderItemCreate
-from .payment import Payment, PaymentCreate, PaymentUpdate, PaymentStatus, PaymentMethod, STKPushRequest, STKPushResponse
-from .delivery import Delivery, DeliveryCreate, DeliveryUpdate, DeliveryStatus
+# User schemas
+from .user import UserCreate, UserUpdate, UserLogin, UserOut, Token, TokenData
+
+# Restaurant schemas (limit to existing names)
+from .restaurant import Restaurant, RestaurantCreate
+
+# Meal schemas (limit to existing names)
+from .meal import Meal, MealCreate
+
+# Order schemas (limit to existing names)
+from .order import OrderOut, OrderCreate, ContributionCreate, ContributionOut
+
+# Payment schemas (limit to existing names)
+from .payment import PaymentInit as PaymentInit, PaymentStatus as PaymentStatus
+
+# Delivery schemas (limit to existing names)
+from .delivery import DeliveryRequest as DeliveryRequest, DeliveryStatus as DeliveryStatus
+

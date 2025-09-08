@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Database URL from environment variable
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./gawa.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///../gawa.db")
 
 # Create SQLAlchemy engine
 engine = create_engine(
@@ -28,3 +28,4 @@ def get_db():
         yield db
     finally:
         db.close()
+

@@ -2,91 +2,32 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
 from database import get_db
-from models.restaurant import Restaurant
-from models.user import User
-from schemas.restaurant import RestaurantCreate, RestaurantUpdate, Restaurant as RestaurantSchema
-from utils.security import get_current_user
+from models.restaurant import Restaurant as RestaurantModel
+from schemas.restaurant import Restaurant, RestaurantCreate
+from utils.security import get_current_user, require_restaurant_owner
 
 router = APIRouter()
 
-@router.get("/", response_model=List[RestaurantSchema])
-async def get_restaurants(
-    skip: int = 0, 
-    limit: int = 100, 
-    db: Session = Depends(get_db)
-):
-    """Get all active restaurants."""
-    restaurants = db.query(Restaurant).filter(Restaurant.is_active == True).offset(skip).limit(limit).all()
-    return restaurants
 
-@router.get("/{restaurant_id}", response_model=RestaurantSchema)
-async def get_restaurant(
-    restaurant_id: int, 
-    db: Session = Depends(get_db)
-):
-    """Get a specific restaurant by ID."""
-    restaurant = db.query(Restaurant).filter(Restaurant.id == restaurant_id).first()
-    if not restaurant:
-        raise HTTPException(status_code=404, detail="Restaurant not found")
-    return restaurant
+@router.get("/", response_model=List[Restaurant])
+def list_restaurants(db: Session = Depends(get_db)):
+    items = db.query(RestaurantModel).filter(RestaurantModel.is_active == True).all()
+    return [Restaurant(id=i.id, name=i.name) for i in items]
 
-@router.post("/", response_model=RestaurantSchema)
-async def create_restaurant(
-    restaurant: RestaurantCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Create a new restaurant."""
-    # Check if user is restaurant owner
+
+@router.post("/", response_model=Restaurant)
+def create_restaurant(restaurant: RestaurantCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
+    # Only restaurant owners can create
     if not current_user.is_restaurant_owner:
-        raise HTTPException(status_code=403, detail="User is not a restaurant owner")
-    
-    db_restaurant = Restaurant(**restaurant.dict())
-    db.add(db_restaurant)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Restaurant owner required")
+    db_rest = RestaurantModel(
+        name=restaurant.name,
+        address="",
+        city="",
+        owner_id=current_user.id,
+        is_active=True,
+    )
+    db.add(db_rest)
     db.commit()
-    db.refresh(db_restaurant)
-    return db_restaurant
-
-@router.put("/{restaurant_id}", response_model=RestaurantSchema)
-async def update_restaurant(
-    restaurant_id: int,
-    restaurant_update: RestaurantUpdate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Update restaurant information."""
-    restaurant = db.query(Restaurant).filter(Restaurant.id == restaurant_id).first()
-    if not restaurant:
-        raise HTTPException(status_code=404, detail="Restaurant not found")
-    
-    # Check if user owns this restaurant
-    if restaurant.owner_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
-    
-    # Update only provided fields
-    update_data = restaurant_update.dict(exclude_unset=True)
-    for field, value in update_data.items():
-        setattr(restaurant, field, value)
-    
-    db.commit()
-    db.refresh(restaurant)
-    return restaurant
-
-@router.delete("/{restaurant_id}")
-async def delete_restaurant(
-    restaurant_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Delete a restaurant."""
-    restaurant = db.query(Restaurant).filter(Restaurant.id == restaurant_id).first()
-    if not restaurant:
-        raise HTTPException(status_code=404, detail="Restaurant not found")
-    
-    # Check if user owns this restaurant
-    if restaurant.owner_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
-    
-    db.delete(restaurant)
-    db.commit()
-    return {"message": "Restaurant deleted successfully"}
+    db.refresh(db_rest)
+    return Restaurant(id=db_rest.id, name=db_rest.name)

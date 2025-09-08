@@ -1,99 +1,50 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from database import get_db
-from models.user import User
-from schemas.payment import PaymentCreate, PaymentUpdate, Payment as PaymentSchema, STKPushRequest, STKPushResponse
-from services.payment_service import (
-    create_payment, get_payment, update_payment_status, 
-    initiate_mpesa_stk_push, handle_mpesa_callback
-)
-from utils.security import get_current_user
+from schemas.payment import PaymentInit, PaymentStatus
+from models.payment import Payment, PaymentStatus as PayStatus, PaymentMethod
+from models.contribution import Contribution, ContributionStatus
 
 router = APIRouter()
 
-@router.post("/", response_model=PaymentSchema)
-async def create_new_payment(
-    payment: PaymentCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Create a new payment."""
-    return create_payment(db=db, payment=payment)
+@router.post("/init", response_model=PaymentStatus)
+def init_payment(data: PaymentInit, db: Session = Depends(get_db)):
+    # Idempotent: check existing by reference on contribution
+    contrib = db.query(Contribution).filter(Contribution.id == data.user_id).first()
+    if not contrib:
+        raise HTTPException(status_code=404, detail="Contribution not found")
+    # For MVP, create payment or return existing
+    payment = db.query(Payment).filter(Payment.order_id == contrib.order_id, Payment.amount == contrib.amount).first()
+    if not payment:
+        payment = Payment(
+            order_id=contrib.order_id,
+            amount=contrib.amount,
+            currency="KES",
+            payment_method=PaymentMethod.MPESA,
+            status=PayStatus.PROCESSING,
+        )
+        db.add(payment)
+        db.commit()
+        db.refresh(payment)
+    return PaymentStatus(status="processing", transaction_id=str(payment.id))
 
-@router.get("/{payment_id}", response_model=PaymentSchema)
-async def get_payment_by_id(
-    payment_id: int, 
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Get a specific payment by ID."""
-    payment = get_payment(db, payment_id)
+@router.get("/{transaction_id}", response_model=PaymentStatus)
+def check_payment(transaction_id: str, db: Session = Depends(get_db)):
+    payment = db.query(Payment).filter(Payment.id == int(transaction_id)).first()
     if not payment:
         raise HTTPException(status_code=404, detail="Payment not found")
-    
-    # Check if user has permission to view this payment
-    if payment.order.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
-    
-    return payment
+    return PaymentStatus(status=payment.status.value, transaction_id=transaction_id)
 
-@router.post("/stkpush", response_model=STKPushResponse)
-async def stk_push(
-    stk_request: STKPushRequest,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Initiate M-Pesa STK push payment."""
-    # Create payment first
-    payment_data = PaymentCreate(
-        order_id=stk_request.order_id,
-        amount=stk_request.amount,
-        payment_method="mpesa",
-        mpesa_phone_number=stk_request.phone_number
-    )
-    
-    payment = create_payment(db=db, payment=payment_data)
-    
-    # Initiate STK push
-    result = initiate_mpesa_stk_push(db, payment.id, stk_request.phone_number)
-    
-    return STKPushResponse(
-        success=result["success"],
-        message=result["message"],
-        payment_reference=payment.payment_reference
-    )
 
-@router.post("/callback")
-async def mpesa_callback(request: Request, db: Session = Depends(get_db)):
-    """Handle M-Pesa payment confirmation callback (no auth)."""
-    try:
-        payload = await request.json()
-        result = handle_mpesa_callback(db, payload)
-        return result
-    except Exception as e:
-        return {"status": "error", "message": f"Callback processing failed: {str(e)}"}
-
-@router.put("/{payment_id}", response_model=PaymentSchema)
-async def update_payment(
-    payment_id: int,
-    payment_update: PaymentUpdate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
-):
-    """Update payment information."""
-    payment = get_payment(db, payment_id)
+@router.post("/webhook/mpesa", response_model=PaymentStatus)
+def webhook_mpesa(callback: dict, db: Session = Depends(get_db)):
+    # MVP: mark first PROCESSING payment as COMPLETED and contribution as PAID
+    payment = db.query(Payment).filter(Payment.status == PayStatus.PROCESSING).first()
     if not payment:
-        raise HTTPException(status_code=404, detail="Payment not found")
-    
-    # Check if user has permission to update this payment
-    if payment.order.customer_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Not enough permissions")
-    
-    # Update payment
-    update_data = payment_update.dict(exclude_unset=True)
-    updated_payment = update_payment_status(db, payment_id, **update_data)
-    
-    if not updated_payment:
-        raise HTTPException(status_code=400, detail="Failed to update payment")
-    
-    return updated_payment
+        raise HTTPException(status_code=404, detail="No processing payment")
+    payment.status = PayStatus.COMPLETED
+    contrib = db.query(Contribution).filter(Contribution.order_id == payment.order_id, Contribution.amount == payment.amount).first()
+    if contrib:
+        contrib.status = ContributionStatus.PAID
+    db.commit()
+    return PaymentStatus(status="completed", transaction_id=str(payment.id))

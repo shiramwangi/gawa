@@ -162,3 +162,4 @@ backend/
 ## Development
 
 This backend is designed to work with Ismahan's frontend. The API follows RESTful conventions and includes comprehensive error handling and validation.
+

@@ -95,3 +95,4 @@ def update_delivery_location(db: Session, delivery_id: int, location: str) -> Op
         db.commit()
         db.refresh(delivery)
     return delivery
+
